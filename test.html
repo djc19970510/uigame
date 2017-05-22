@@ -1,0 +1,26 @@
+<canvas></canvas>
+<script>
+    function flipHorizontally(context,around){
+        context.translate(around,0);
+        context.scale(-1,1);
+        context.translate(-around,0);
+    }
+
+    var cx = document.querySelector("canvas").getContext("2d");
+    cx.scale(1,1);
+    var img = document.createElement("img");
+    img.src = "img/player.png";
+    var sw = 24,sh=30;
+    img.addEventListener("load",function(){
+        flipHorizontally(cx,100+sw/2);
+        //cx.drawImage(img,0,0,sw,sh,100,0,sw,sh);
+        var cycle = 0;
+        setInterval(function(){
+            cx.clearRect(0,0,sw,sh);
+            cx.drawImage(img,
+                         cycle*sw,0,sw,sh,
+                         0,0,sw,sh);
+            cycle = (cycle + 1)%8;
+        },120)
+    });
+</script>
