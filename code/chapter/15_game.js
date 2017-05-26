@@ -21,6 +21,7 @@ function Level(plan) {
     for (var x = 0; x < this.width; x++) {
       var ch = line[x], fieldType = null;
       var Actor = actorChars[ch];
+      //console.log(Actor);
       if (Actor)
         this.actors.push(new Actor(new Vector(x, y), ch));
       else if (ch == "x")
@@ -55,9 +56,13 @@ Vector.prototype.times = function(factor) {
 var actorChars = {
   "@": Player,
   "o": Coin,
-  "=": Lava, "|": Lava, "v": Lava
+  "=": Lava,"v": Lava,
+  "|": Pipes
+  // "-": pipetop,
+  // "?": coinblock
 };
 
+//玩家类
 function Player(pos) {
   this.pos = pos.plus(new Vector(0, -0.5));
   this.size = new Vector(0.8, 1.5);
@@ -65,6 +70,17 @@ function Player(pos) {
 }
 Player.prototype.type = "player";
 
+//水管类
+function Pipes(pos,ch){
+  this.pos = pos;
+  this.size = new Vector(1,1);
+}
+Pipes.prototype.type = "pipes";
+
+Pipes.prototype.act = function(step) {
+};
+
+//岩浆类
 function Lava(pos, ch) {
   this.pos = pos;
   this.size = new Vector(1, 1);
@@ -79,6 +95,7 @@ function Lava(pos, ch) {
 }
 Lava.prototype.type = "lava";
 
+//金币类
 function Coin(pos) {
   this.basePos = this.pos = pos.plus(new Vector(0.2, 0.1));
   this.size = new Vector(0.6, 0.6);
@@ -88,6 +105,7 @@ Coin.prototype.type = "coin";
 
 var simpleLevel = new Level(simpleLevelPlan);
 
+//DOM处理
 function elt(name, className) {
   var elt = document.createElement(name);
   if (className) elt.className = className;
@@ -166,20 +184,24 @@ DOMDisplay.prototype.clear = function() {
   this.wrap.parentNode.removeChild(this.wrap);
 };
 
+//关卡
 Level.prototype.obstacleAt = function(pos, size) {
   var xStart = Math.floor(pos.x);
   var xEnd = Math.ceil(pos.x + size.x);
   var yStart = Math.floor(pos.y);
   var yEnd = Math.ceil(pos.y + size.y);
 
-  if (xStart < 0 || xEnd > this.width || yStart < 0)
+  if (xStart < 0 || xEnd > this.width || yStart < 0){
     return "wall";
+  }
   if (yEnd > this.height)
     return "lava";
   for (var y = yStart; y < yEnd; y++) {
     for (var x = xStart; x < xEnd; x++) {
       var fieldType = this.grid[y][x];
-      if (fieldType) return fieldType;
+      if (fieldType){
+        return fieldType;
+      } 
     }
   }
 };
@@ -215,8 +237,9 @@ Lava.prototype.act = function(step, level) {
   var newPos = this.pos.plus(this.speed.times(step));
   if (!level.obstacleAt(newPos, this.size))
     this.pos = newPos;
-  else if (this.repeatPos)
+  else if (this.repeatPos){
     this.pos = this.repeatPos;
+  }
   else
     this.speed = this.speed.times(-1);
 };
@@ -239,10 +262,13 @@ Player.prototype.moveX = function(step, level, keys) {
   var motion = new Vector(this.speed.x * step, 0);
   var newPos = this.pos.plus(motion);
   var obstacle = level.obstacleAt(newPos, this.size);
-  if (obstacle)
+  if (obstacle){
+    console.log(obstacle);
     level.playerTouched(obstacle);
-  else
+  }
+  else{
     this.pos = newPos;
+  }
 };
 
 var gravity = 30;
@@ -266,11 +292,14 @@ Player.prototype.moveY = function(step, level, keys) {
 
 Player.prototype.act = function(step, level, keys) {
   this.moveX(step, level, keys);
+  //console.log(step);
   this.moveY(step, level, keys);
 
   var otherActor = level.actorAt(this);
-  if (otherActor)
+  if (otherActor){
+    //console.log(otherActor);
     level.playerTouched(otherActor.type, otherActor);
+  }
 
   // Losing animation
   if (level.status == "lost") {
@@ -343,16 +372,21 @@ function runLevel(level, Display, andThen) {
   });
 }
 
+//运行游戏
 function runGame(plans, Display) {
-  function startLevel(n) {
-    runLevel(new Level(plans[n]), Display, function(status) {
-      if (status == "lost")
-        startLevel(n);
-      else if (n < plans.length - 1)
-        startLevel(n + 1);
-      else
-        console.log("You win!");
-    });
+  function startLevel(n,live) {
+    if(live==0)
+      alert("You lose");
+    else{
+      runLevel(new Level(plans[n]), Display, function(status) {
+        if (status == "lost")
+          startLevel(n,live-1);
+        else if (n < plans.length - 1)
+          startLevel(n + 1);
+        else
+          alert("You win!");
+      });
+    }
   }
-  startLevel(0);
+  startLevel(0,3);
 }
