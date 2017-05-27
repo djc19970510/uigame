@@ -29,9 +29,10 @@ function Level(plan) {
         fieldType = "lava";
       else if (ch == "|")
         fieldType = "pipe";
-      else if (ch == "?"){
+      else if (ch == "?")
         fieldType = "blockcoin";
-      }
+      else if (ch == "b")
+        fieldType = "block2";
       console.log(fieldType);
       gridLine.push(fieldType);
     }
