@@ -74,7 +74,7 @@ CanvasDisplay.prototype.clearDisplay = function() {
 };
 
 var otherSprites = document.createElement("img");
-otherSprites.src = "img/sprites.png";
+otherSprites.src = "img/2.png";
 
 CanvasDisplay.prototype.drawBackground = function() {
   var view = this.viewport;
@@ -89,7 +89,11 @@ CanvasDisplay.prototype.drawBackground = function() {
       if (tile == null) continue;
       var screenX = (x - view.left) * scale;
       var screenY = (y - view.top) * scale;
-      var tileX = tile == "lava" ? scale : 0;
+      var tileX;
+      if(tile=="lava") tileX = scale;
+      else if(tile=="pipe") tileX = scale * 2;
+      else if(tile=="blockcoin") tileX = scale * 3;
+      else tileX = 0;
       this.cx.drawImage(otherSprites,
                         tileX,         0, scale, scale,
                         screenX, screenY, scale, scale);
@@ -134,7 +138,12 @@ CanvasDisplay.prototype.drawActors = function() {
     if (actor.type == "player") {
       this.drawPlayer(x, y, width, height);
     } else {
-      var tileX = (actor.type == "coin" ? 2 : 1) * scale;
+      var tileX;
+      if(actor.type == "coin"){
+        tileX = 4*scale;
+      }else{
+        tileX = 1*scale;
+      }
       this.cx.drawImage(otherSprites,
                         tileX, 0, width, height,
                         x,     y, width, height);

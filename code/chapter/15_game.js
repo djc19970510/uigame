@@ -21,18 +21,22 @@ function Level(plan) {
     for (var x = 0; x < this.width; x++) {
       var ch = line[x], fieldType = null;
       var Actor = actorChars[ch];
-      //console.log(Actor);
       if (Actor)
         this.actors.push(new Actor(new Vector(x, y), ch));
       else if (ch == "x")
         fieldType = "wall";
       else if (ch == "!")
         fieldType = "lava";
+      else if (ch == "|")
+        fieldType = "pipe";
+      else if (ch == "?"){
+        fieldType = "blockcoin";
+      }
+      console.log(fieldType);
       gridLine.push(fieldType);
     }
     this.grid.push(gridLine);
   }
-
   this.player = this.actors.filter(function(actor) {
     return actor.type == "player";
   })[0];
@@ -56,8 +60,7 @@ Vector.prototype.times = function(factor) {
 var actorChars = {
   "@": Player,
   "o": Coin,
-  "=": Lava,"v": Lava,
-  "|": Pipes
+  "=": Lava,"v": Lava
   // "-": pipetop,
   // "?": coinblock
 };
@@ -70,15 +73,15 @@ function Player(pos) {
 }
 Player.prototype.type = "player";
 
-//水管类
-function Pipes(pos,ch){
-  this.pos = pos;
-  this.size = new Vector(1,1);
-}
-Pipes.prototype.type = "pipes";
+// //水管类
+// function Pipes(pos,ch){
+//   this.pos = pos;
+//   this.size = new Vector(1,1);
+// }
+// Pipes.prototype.type = "pipes";
 
-Pipes.prototype.act = function(step) {
-};
+// Pipes.prototype.act = function(step) {
+// };
 
 //岩浆类
 function Lava(pos, ch) {

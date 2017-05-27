@@ -6,10 +6,10 @@ var GAME_LEVELS = [
    "                                                                                                                                                                                           xxx",
    "                                                                                                                                                                                          xxxx",
    "                                                                                                                                                                                         xxxxx",
-   "                ? x?x?x                     --         --                  x?x              x     xx    ?  ?  ?     x          xx      x  x          xx  x             xx?x             xxxxxx",
+   "     x  = x     ? x?x?x                     --         --                  x?x              x     xx    ?  ?  ?     x          xx      x  x          xx  x             xx?x             xxxxxx",
    "    o                               --      ||         ||                                                                             xx  xx        xxx  xx                            xxxxxxx",
    "                          --        ||      ||         ||                                                                            xxx  xxx      xxxx  xxx       --              -- xxxxxxxx",
-   "      | @ x               ||        ||      ||         ||                                                                           xxxx  xxxx    xxxxx  xxxx      ||              ||xxxxxxxxx",
+   " !!!! | @ x               ||        ||      ||         ||                                                                           xxxx  xxxx    xxxxx  xxxx      ||              ||xxxxxxxxx",
    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  xxxxxxxxxxxxxxx   xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  xxxxxxxxxxxxxxx   xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"]
 ];
