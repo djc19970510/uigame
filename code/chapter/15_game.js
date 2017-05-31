@@ -23,17 +23,26 @@ function Level(plan) {
       var Actor = actorChars[ch];
       if (Actor)
         this.actors.push(new Actor(new Vector(x, y), ch));
+      else if (ch == "z")
+        fieldType = "zhuan";
       else if (ch == "x")
         fieldType = "wall";
       else if (ch == "!")
         fieldType = "lava";
-      else if (ch == "|")
+      else if (ch == "-")
         fieldType = "pipe";
+      else if (ch == "|")
+        fieldType = "pipe2";
       else if (ch == "?")
         fieldType = "blockcoin";
       else if (ch == "b")
         fieldType = "block2";
-      console.log(fieldType);
+      else if (ch == "f")
+        fieldType = "flag";
+      else if (ch == "g")
+        fieldType = "flag2"; 
+      else if (ch == "n")
+        fieldType = "none";
       gridLine.push(fieldType);
     }
     this.grid.push(gridLine);
@@ -62,7 +71,6 @@ var actorChars = {
   "@": Player,
   "o": Coin,
   "=": Lava,"v": Lava
-  // "-": pipetop,
   // "?": coinblock
 };
 
@@ -73,6 +81,8 @@ function Player(pos) {
   this.speed = new Vector(0, 0);
 }
 Player.prototype.type = "player";
+
+
 
 // //水管类
 // function Pipes(pos,ch){
@@ -89,7 +99,7 @@ function Lava(pos, ch) {
   this.pos = pos;
   this.size = new Vector(1, 1);
   if (ch == "=") {
-    this.speed = new Vector(2, 0);
+    this.speed = new Vector(-2, 0);
   } else if (ch == "|") {
     this.speed = new Vector(0, 2);
   } else if (ch == "v") {
@@ -237,10 +247,12 @@ Level.prototype.animate = function(step, keys) {
   }
 };
 
+
 Lava.prototype.act = function(step, level) {
   var newPos = this.pos.plus(this.speed.times(step));
-  if (!level.obstacleAt(newPos, this.size))
+  if (!level.obstacleAt(newPos, this.size)){
     this.pos = newPos;
+  }
   else if (this.repeatPos){
     this.pos = this.repeatPos;
   }
@@ -316,16 +328,20 @@ Level.prototype.playerTouched = function(type, actor) {
   if (type == "lava" && this.status == null) {
     this.status = "lost";
     this.finishDelay = 1;
-  } else if (type == "coin") {
-    this.actors = this.actors.filter(function(other) {
-      return other != actor;
-    });
-    if (!this.actors.some(function(actor) {
-      return actor.type == "coin";
-    })) {
-      this.status = "won";
-      this.finishDelay = 1;
-    }
+  } else if (type == "flag2") {
+    this.status = "won";
+    this.finishDelay = 1;
+  } else if (type == "blockcoin"){
+    console.log("touched");
+    this.actors = this.actors.filter(function(other){
+      console.log(actor);
+      return other!=actor;
+    })
+  } else if (type == "coin"){
+    this.actors = this.actors.filter(function(other){
+      console.log(actor);
+      return other!=actor;
+    })
   }
 };
 
