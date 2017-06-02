@@ -15,6 +15,7 @@ function Level(plan) {
   this.height = plan.length;
   this.grid = [];
   this.actors = [];
+  this.coincount = 0;
 
   for (var y = 0; y < this.height; y++) {
     var line = plan[y], gridLine = [];
@@ -279,7 +280,6 @@ Player.prototype.moveX = function(step, level, keys) {
   var newPos = this.pos.plus(motion);
   var obstacle = level.obstacleAt(newPos, this.size);
   if (obstacle){
-    console.log(obstacle);
     level.playerTouched(obstacle);
   }
   else{
@@ -332,14 +332,12 @@ Level.prototype.playerTouched = function(type, actor) {
     this.status = "won";
     this.finishDelay = 1;
   } else if (type == "blockcoin"){
-    console.log("touched");
     this.actors = this.actors.filter(function(other){
-      console.log(actor);
       return other!=actor;
     })
   } else if (type == "coin"){
+    this.coincount += 1;
     this.actors = this.actors.filter(function(other){
-      console.log(actor);
       return other!=actor;
     })
   }

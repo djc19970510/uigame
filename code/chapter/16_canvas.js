@@ -43,6 +43,7 @@ CanvasDisplay.prototype.drawFrame = function(step) {
   this.clearDisplay();
   this.drawBackground();
   this.drawActors();
+  this.drawLifeandScore();
 };
 
 CanvasDisplay.prototype.updateViewport = function() {
@@ -173,3 +174,15 @@ CanvasDisplay.prototype.drawActors = function() {
     }
   }, this);
 };
+
+CanvasDisplay.prototype.drawLifeandScore = function(){
+  var sprite = 0;
+  sprite = Math.floor(this.animationTime * 5) % 2;
+  this.cx.save();
+  console.log(this.level.coincount);
+  this.cx.drawImage(otherSprites,
+                    10, 10, 10, 10,
+                    10, 10, 10, 10);
+
+  this.cx.restore();
+}
