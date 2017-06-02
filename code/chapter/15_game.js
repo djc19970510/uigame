@@ -224,12 +224,20 @@ Level.prototype.obstacleAt = function(pos, size) {
 Level.prototype.actorAt = function(actor) {
   for (var i = 0; i < this.actors.length; i++) {
     var other = this.actors[i];
-    if (other != actor &&
-        actor.pos.x + actor.size.x > other.pos.x &&
-        actor.pos.x < other.pos.x + other.size.x &&
-        actor.pos.y + actor.size.y > other.pos.y &&
-        actor.pos.y < other.pos.y + other.size.y)
-      return other;
+    if (other != actor && actor.pos.x + actor.size.x > other.pos.x && actor.pos.x < other.pos.x + other.size.x && actor.pos.y + actor.size.y > other.pos.y && actor.pos.y < other.pos.y + other.size.y){
+      var acx = actor.pos.x + actor.size.x/2;
+      var acy = actor.pos.y + actor.size.y/2;
+      var otx = other.pos.x + other.size.x/2;
+      var oty = other.pos.y + other.size.y/2;
+      if(acy<oty&&acx>otx+(acy-oty)&&acx<otx-(acy-oty)){
+        console.log("kill");
+        return [other,"kill"];
+      }  
+      else{
+        console.log("die");
+        return [other,"die"];
+      }
+    }  
   }
 };
 
@@ -312,9 +320,11 @@ Player.prototype.act = function(step, level, keys) {
   this.moveY(step, level, keys);
 
   var otherActor = level.actorAt(this);
+  var banlistate
   if (otherActor){
-    //console.log(otherActor);
-    level.playerTouched(otherActor.type, otherActor);
+    banlistate = otherActor[1];
+    otherActor = otherActor[0];
+    level.playerTouched(otherActor.type, otherActor,banlistate);
   }
 
   // Losing animation
@@ -324,10 +334,16 @@ Player.prototype.act = function(step, level, keys) {
   }
 };
 
-Level.prototype.playerTouched = function(type, actor) {
+Level.prototype.playerTouched = function(type, actor,banlistate) {
   if (type == "lava" && this.status == null) {
-    this.status = "lost";
-    this.finishDelay = 1;
+    if(banlistate=="kill"){
+    this.actors = this.actors.filter(function(other){
+      return other!=actor;
+    })}
+    else if(banlistate=="die"){
+      this.status = "lost";
+      this.finishDelay = 1;
+    }
   } else if (type == "flag2") {
     this.status = "won";
     this.finishDelay = 1;

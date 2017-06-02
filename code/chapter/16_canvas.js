@@ -175,14 +175,18 @@ CanvasDisplay.prototype.drawActors = function() {
   }, this);
 };
 
+var scoreSprites = document.createElement("img");
+scoreSprites.src = "img/number.png";
+
 CanvasDisplay.prototype.drawLifeandScore = function(){
   var sprite = 0;
   sprite = Math.floor(this.animationTime * 5) % 2;
   this.cx.save();
-  console.log(this.level.coincount);
-  this.cx.drawImage(otherSprites,
-                    10, 10, 10, 10,
-                    10, 10, 10, 10);
+  this.level.coincount %= 100;
+  let x = this.level.coincount;
+  //this.cx.drawImage(otherSprites,20, 10, 20, 20,20,20, 120, 120);
+  this.cx.drawImage(scoreSprites,(x-x%10)/10* 20,0,20,20,20,20,20,20);
+  this.cx.drawImage(scoreSprites,x%10*20,0,20,20,30,20,20,20);
 
   this.cx.restore();
 }
