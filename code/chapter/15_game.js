@@ -16,7 +16,8 @@ function Level(plan) {
   this.grid = [];
   this.actors = [];
   this.coincount = 0;
-
+  this.starttime = Date.parse(new Date());
+  this.nowtime = 0;
   for (var y = 0; y < this.height; y++) {
     var line = plan[y], gridLine = [];
     for (var x = 0; x < this.width; x++) {
@@ -71,7 +72,7 @@ Vector.prototype.times = function(factor) {
 var actorChars = {
   "@": Player,
   "o": Coin,
-  "=": Lava,"v": Lava
+  "=": Banli,"v": Lava
   // "?": coinblock
 };
 
@@ -95,13 +96,33 @@ Player.prototype.type = "player";
 // Pipes.prototype.act = function(step) {
 // };
 
-//岩浆类
-function Lava(pos, ch) {
+//板栗
+function Banli(pos, ch) {
   this.pos = pos;
   this.size = new Vector(1, 1);
   if (ch == "=") {
     this.speed = new Vector(-2, 0);
-  } else if (ch == "|") {
+  } 
+}
+Banli.prototype.type = "banli";
+
+Banli.prototype.act = function(step, level) {
+  var newPos = this.pos.plus(this.speed.times(step));
+  if (!level.obstacleAt(newPos, this.size)){
+    this.pos = newPos;
+  }
+  else if (this.repeatPos){
+    this.pos = this.repeatPos;
+  }
+  else
+    this.speed = this.speed.times(-1);
+};
+
+//岩浆类
+function Lava(pos, ch) {
+  this.pos = pos;
+  this.size = new Vector(1, 1);
+  if (ch == "|") {
     this.speed = new Vector(0, 2);
   } else if (ch == "v") {
     this.speed = new Vector(0, 3);
@@ -224,12 +245,20 @@ Level.prototype.obstacleAt = function(pos, size) {
 Level.prototype.actorAt = function(actor) {
   for (var i = 0; i < this.actors.length; i++) {
     var other = this.actors[i];
-    if (other != actor &&
-        actor.pos.x + actor.size.x > other.pos.x &&
-        actor.pos.x < other.pos.x + other.size.x &&
-        actor.pos.y + actor.size.y > other.pos.y &&
-        actor.pos.y < other.pos.y + other.size.y)
-      return other;
+    if (other != actor && actor.pos.x + actor.size.x > other.pos.x && actor.pos.x < other.pos.x + other.size.x && actor.pos.y + actor.size.y > other.pos.y && actor.pos.y < other.pos.y + other.size.y){
+      var acx = actor.pos.x + actor.size.x/2;
+      var acy = actor.pos.y + actor.size.y/2;
+      var otx = other.pos.x + other.size.x/2;
+      var oty = other.pos.y + other.size.y/2;
+      if(acy<oty&&acx>otx+(acy-oty)&&acx<otx-(acy-oty)){
+        console.log("kill");
+        return [other,"kill"];
+      }  
+      else{
+        console.log("die");
+        return [other,"die"];
+      }
+    }  
   }
 };
 
@@ -312,9 +341,11 @@ Player.prototype.act = function(step, level, keys) {
   this.moveY(step, level, keys);
 
   var otherActor = level.actorAt(this);
+  var banlistate
   if (otherActor){
-    //console.log(otherActor);
-    level.playerTouched(otherActor.type, otherActor);
+    banlistate = otherActor[1];
+    otherActor = otherActor[0];
+    level.playerTouched(otherActor.type, otherActor,banlistate);
   }
 
   // Losing animation
@@ -324,11 +355,21 @@ Player.prototype.act = function(step, level, keys) {
   }
 };
 
-Level.prototype.playerTouched = function(type, actor) {
-  if (type == "lava" && this.status == null) {
+Level.prototype.playerTouched = function(type, actor,banlistate) {
+  if (type == "banli" && this.status == null) {
+    if(banlistate=="kill"){
+    this.actors = this.actors.filter(function(other){
+      return other!=actor;
+    })}
+    else if(banlistate=="die"){
+      this.status = "lost";
+      this.finishDelay = 1;
+    }
+  } else if(type=="lava" && this.status == null){
     this.status = "lost";
     this.finishDelay = 1;
-  } else if (type == "flag2") {
+  }
+    else if (type == "flag2") {
     this.status = "won";
     this.finishDelay = 1;
   } else if (type == "blockcoin"){
@@ -340,6 +381,12 @@ Level.prototype.playerTouched = function(type, actor) {
     this.actors = this.actors.filter(function(other){
       return other!=actor;
     })
+  }
+  this.nowtime = 99-(Date.parse(new Date())-this.starttime)/1000;
+  console.log(this.nowtime);
+  if(this.nowtime<0 && this.status == null){
+    this.status = "lost";
+    this.finishDelay = 1;
   }
 };
 
@@ -393,6 +440,7 @@ function runLevel(level, Display, andThen) {
 //运行游戏
 function runGame(plans, Display) {
   function startLevel(n,live) {
+    
     if(live==0)
       alert("You lose");
     else{
@@ -400,7 +448,7 @@ function runGame(plans, Display) {
         if (status == "lost")
           startLevel(n,live-1);
         else if (n < plans.length - 1)
-          startLevel(n + 1);
+          startLevel(n + 1,live);
         else
           alert("You win!");
       });

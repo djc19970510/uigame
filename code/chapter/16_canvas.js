@@ -44,6 +44,7 @@ CanvasDisplay.prototype.drawFrame = function(step) {
   this.drawBackground();
   this.drawActors();
   this.drawLifeandScore();
+  this.drawTime();
 };
 
 CanvasDisplay.prototype.updateViewport = function() {
@@ -93,7 +94,7 @@ CanvasDisplay.prototype.drawBackground = function() {
       var tileX = 0;
       var tileY = 0;
       var timesX=timesY=1;
-      if(tile=="lava") {tileX = scale ; }
+      if(tile=="banli") {tileX = scale ; }
       else if(tile=="pipe") {tileX = scale * 5;timesX=timesY=2;}
       else if(tile=="zhuan") {tileX = scale * 4;}
       else if(tile=="blockcoin") {tileX = scale * 2;}
@@ -159,7 +160,7 @@ CanvasDisplay.prototype.drawActors = function() {
     var y = (actor.pos.y - this.viewport.top) * scale;
     if (actor.type == "player") {
       this.drawPlayer(x, y, width, height);
-    } else if(actor.type == "lava"){
+    } else if(actor.type == "banli"){
       this.drawLava(x,y,width,height,scale);
     }else{
       var tileX;
@@ -175,14 +176,31 @@ CanvasDisplay.prototype.drawActors = function() {
   }, this);
 };
 
+var scoreSprites = document.createElement("img");
+scoreSprites.src = "img/number.png";
+
 CanvasDisplay.prototype.drawLifeandScore = function(){
   var sprite = 0;
   sprite = Math.floor(this.animationTime * 5) % 2;
   this.cx.save();
-  console.log(this.level.coincount);
-  this.cx.drawImage(otherSprites,
-                    10, 10, 10, 10,
-                    10, 10, 10, 10);
-
+  this.level.coincount %= 100;
+  let x = this.level.coincount;
+  //this.cx.drawImage(otherSprites,20, 10, 20, 20,20,20, 120, 120);
+  this.cx.drawImage(scoreSprites,(x-x%10)/10* 20,0,20,20,20,20,20,20);
+  this.cx.drawImage(scoreSprites,x%10*20,0,20,20,30,20,20,20);
   this.cx.restore();
+  
+}
+
+CanvasDisplay.prototype.drawTime = function(){
+  var sprite = 0;
+  sprite = Math.floor(this.animationTime * 5) % 2;
+  this.cx.save();
+  this.level.nowtime;
+  let x = this.level.nowtime;
+  //this.cx.drawImage(otherSprites,20, 10, 20, 20,20,20, 120, 120);
+  this.cx.drawImage(scoreSprites,(x-x%10)/10*20,0,20,20,550,20,20,20);
+  this.cx.drawImage(scoreSprites,x%10*20,0,20,20,560,20,20,20);
+  this.cx.restore();
+  
 }
