@@ -45,6 +45,7 @@ CanvasDisplay.prototype.drawFrame = function(step) {
   this.drawActors();
   this.drawLifeandScore();
   this.drawTime();
+  this.drawLife();
 };
 
 CanvasDisplay.prototype.updateViewport = function() {
@@ -201,6 +202,14 @@ CanvasDisplay.prototype.drawTime = function(){
   //this.cx.drawImage(otherSprites,20, 10, 20, 20,20,20, 120, 120);
   this.cx.drawImage(scoreSprites,(x-x%10)/10*20,0,20,20,550,20,20,20);
   this.cx.drawImage(scoreSprites,x%10*20,0,20,20,560,20,20,20);
+  this.cx.restore();
+  
+}
+
+CanvasDisplay.prototype.drawLife = function(){
+  this.cx.save();
+  //this.cx.drawImage(otherSprites,20, 10, 20, 20,20,20, 120, 120);
+  this.cx.drawImage(scoreSprites,lives*20,0,20,20,350,20,20,20);
   this.cx.restore();
   
 }

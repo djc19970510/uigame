@@ -10,6 +10,8 @@ var simpleLevelPlan = [
   "                      "
 ];
 
+var lives = 3;
+
 function Level(plan) {
   this.width = plan[0].length;
   this.height = plan.length;
@@ -439,20 +441,25 @@ function runLevel(level, Display, andThen) {
 
 //运行游戏
 function runGame(plans, Display) {
-  function startLevel(n,live) {
-    
-    if(live==0)
+  function startLevel(n) {
+    if(lives==0){
       alert("You lose");
+      location.replace(location.href);
+    }
     else{
       runLevel(new Level(plans[n]), Display, function(status) {
-        if (status == "lost")
-          startLevel(n,live-1);
+        if (status == "lost"){
+          lives-=1;
+          startLevel(n);
+        }
         else if (n < plans.length - 1)
-          startLevel(n + 1,live);
-        else
+          startLevel(n + 1);
+        else{
           alert("You win!");
+          location.replace(location.href);
+        }
       });
     }
   }
-  startLevel(0,3);
+  startLevel(0);
 }
