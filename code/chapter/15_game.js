@@ -1,16 +1,4 @@
-var simpleLevelPlan = [
-  "                      ",
-  "                      ",
-  "  x              = x  ",
-  "  x         o o    x  ",
-  "  x @      xxxxx   x  ",
-  "  xxxxx            x  ",
-  "      x!!!!!!!!!!!!x  ",
-  "      xxxxxxxxxxxxxx  ",
-  "                      "
-];
-
-var lives = 3;
+var lives = 3;//生命数
 
 function Level(plan) {
   this.width = plan[0].length;
@@ -61,6 +49,7 @@ Level.prototype.isFinished = function() {
   return this.status != null && this.finishDelay < 0;
 };
 
+
 function Vector(x, y) {
   this.x = x; this.y = y;
 }
@@ -85,18 +74,6 @@ function Player(pos) {
   this.speed = new Vector(0, 0);
 }
 Player.prototype.type = "player";
-
-
-
-// //水管类
-// function Pipes(pos,ch){
-//   this.pos = pos;
-//   this.size = new Vector(1,1);
-// }
-// Pipes.prototype.type = "pipes";
-
-// Pipes.prototype.act = function(step) {
-// };
 
 //板栗
 function Banli(pos, ch) {
@@ -141,7 +118,7 @@ function Coin(pos) {
 }
 Coin.prototype.type = "coin";
 
-var simpleLevel = new Level(simpleLevelPlan);
+//var simpleLevel = new Level(simpleLevelPlan);
 
 //DOM处理
 function elt(name, className) {
@@ -245,6 +222,7 @@ Level.prototype.obstacleAt = function(pos, size) {
 };
 
 Level.prototype.actorAt = function(actor) {
+  console.log(this.actors.length);
   for (var i = 0; i < this.actors.length; i++) {
     var other = this.actors[i];
     if (other != actor && actor.pos.x + actor.size.x > other.pos.x && actor.pos.x < other.pos.x + other.size.x && actor.pos.y + actor.size.y > other.pos.y && actor.pos.y < other.pos.y + other.size.y){
@@ -253,11 +231,9 @@ Level.prototype.actorAt = function(actor) {
       var otx = other.pos.x + other.size.x/2;
       var oty = other.pos.y + other.size.y/2;
       if(acy<oty&&acx>otx+(acy-oty)&&acx<otx-(acy-oty)){
-        console.log("kill");
         return [other,"kill"];
       }  
       else{
-        console.log("die");
         return [other,"die"];
       }
     }  
@@ -337,11 +313,10 @@ Player.prototype.moveY = function(step, level, keys) {
   }
 };
 
+//玩家行为处理
 Player.prototype.act = function(step, level, keys) {
   this.moveX(step, level, keys);
-  //console.log(step);
   this.moveY(step, level, keys);
-
   var otherActor = level.actorAt(this);
   var banlistate
   if (otherActor){
@@ -385,14 +360,13 @@ Level.prototype.playerTouched = function(type, actor,banlistate) {
     })
   }
   this.nowtime = 99-(Date.parse(new Date())-this.starttime)/1000;
-  console.log(this.nowtime);
   if(this.nowtime<0 && this.status == null){
     this.status = "lost";
     this.finishDelay = 1;
   }
 };
 
-var arrowCodes = {37: "left", 38: "up", 39: "right"};
+var arrowCodes = {37: "left", 38: "up", 39: "right"};//允许按键
 
 function trackKeys(codes) {
   var pressed = Object.create(null);
